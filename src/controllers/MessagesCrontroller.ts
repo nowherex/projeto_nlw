@@ -1,9 +1,6 @@
 import { Request, Response } from "express"
 import { MessagesService } from "../services/MessagesService"
 
-
-
-
 class MessagesCrontroller {
     async create(request: Request, response: Response) {
         const {admin_id, text, user_id } = request.body;
