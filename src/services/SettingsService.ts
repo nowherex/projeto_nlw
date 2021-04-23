@@ -18,25 +18,44 @@ class SettingsService {
         this.settingsRepository = getCustomRepository(SettingsRepository);
     }
 
-    async create ({ chat, username } : ISettingsCreate ) {
-        
-        const userAlreadyExists = await this.settingsRepository.findOne({username});
+    async create({ chat, username }: ISettingsCreate) {
 
-        if(userAlreadyExists) {
+        const userAlreadyExists = await this.settingsRepository.findOne({ username });
+
+        if (userAlreadyExists) {
             let erro = new Error("User already exists!") as ErrorWithStatus;
             erro.status = 409;
             throw erro;
         }
 
         const settings = this.settingsRepository.create({
-            chat, 
+            chat,
             username
         });
-    
+
         await this.settingsRepository.save(settings);
 
         return settings;
-    
+
+    }
+
+    async findByUsername(username: string) {
+        const settings = await this.settingsRepository.findOne({
+            username
+        });
+
+        return settings;
+    }
+
+    async update(username: string, chat: boolean) {
+        await this.settingsRepository
+            .createQueryBuilder()
+            .update(Setting)
+            .set({ chat })
+            .where("username = :username", {
+                username
+            })
+            .execute();
     }
 }
 
