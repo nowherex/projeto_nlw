@@ -1,11 +1,9 @@
 const socket = io();
 let connectionsUsers = [];
-let allConnections = [];
 
-socket.on("admin_list_all_users", (connectionsWithoutAdmin, allconnections) => {
+socket.on("admin_list_all_users", (connectionsWithoutAdmin) => {
 
     connectionsUsers = connectionsWithoutAdmin;
-    allConnections = allconnections;
 
     document.getElementById("list_users").innerHTML = "";
 
@@ -99,16 +97,13 @@ function sendMessage(id) {
 
 socket.on("admin_receive_message", (data) => {
 
-    const connection = allConnections.find(connection => connection.socket_id == data.socket_id);
-
-
-    const divMessages = document.getElementById(`allMessages${connection.user_id}`);
+    const divMessages = document.getElementById(`allMessages${data.message.user_id}`);
 
     const createDiv = document.createElement("div");
 
     createDiv.className = "admin_message_client";
 
-    createDiv.innerHTML = `<span>${connection.user.email}</span>`;
+    createDiv.innerHTML = `<span>${data.email}</span>`;
     createDiv.innerHTML += `<span>${data.message.text}</span>`;
     createDiv.innerHTML += `<span class="admin_date">${dayjs(data.message.created_at).format("DD/MM/YYYY HH:mm:ss")}</span>`;
 

@@ -52,6 +52,7 @@ class ConnectionsService {
         const connections = await this.connectionsRepository.find({
             relations: ["user"],
         });
+        
         return connections;
     }
 
@@ -68,6 +69,18 @@ class ConnectionsService {
         .createQueryBuilder()
         .update(Connection)
         .set({ admin_id })
+        .where("user_id = :user_id", {
+            user_id,
+        })
+        .execute();
+    }
+
+
+    async removeAdminID(user_id: string) {
+        await this.connectionsRepository
+        .createQueryBuilder()
+        .update(Connection)
+        .set({ admin_id: null })
         .where("user_id = :user_id", {
             user_id,
         })

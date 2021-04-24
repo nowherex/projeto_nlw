@@ -9,9 +9,9 @@ io.on("connect", async (socket) => {
 
 
     const allConnectionsWithoutAdmin = await connectionsService.findAllWithoutAdmin();
-    const allConnections = await connectionsService.findAll(); // acrescentado para repassar tambem todas as conexões.
 
-    io.emit("admin_list_all_users", allConnectionsWithoutAdmin, allConnections);
+
+    io.emit("admin_list_all_users", allConnectionsWithoutAdmin);
 
     socket.on("admin_list_messages_by_user", async (params, callback) => {
         const { user_id } = params;
@@ -44,9 +44,8 @@ io.on("connect", async (socket) => {
         await connectionsService.updateAdminID(user_id, socket.id);
 
         const allConnectionsWithoutAdmin = await connectionsService.findAllWithoutAdmin();
-        const allConnections = await connectionsService.findAll();
     
-        io.emit("admin_list_all_users", allConnectionsWithoutAdmin, allConnections);
+        io.emit("admin_list_all_users", allConnectionsWithoutAdmin);
 
     })
 

@@ -14,6 +14,7 @@ io.on("connect", (socket) => {
     const messagesService = new MessagesService();
 
     socket.on("client_first_access", async (params) => {
+        
         const socket_id = socket.id;
         const { text, email } = params as IParams;
         let user_id = null;
@@ -33,6 +34,7 @@ io.on("connect", (socket) => {
         } else {
 
             user_id = userExists.id;
+            await connectionsService.removeAdminID(user_id);
 
             const connection = await connectionsService.findByUserId(userExists.id);
             if (!connection) {
@@ -71,14 +73,17 @@ io.on("connect", (socket) => {
 
         const { user_id } = await connectionsService.findBySocketID(socket_id);
 
+        const user = await usersService.findById(user_id);
+
         const message = await messagesService.create({
             text,
-            user_id
+            user_id,
         });
 
         io.to(socket_admin_id).emit("admin_receive_message", {
             message,
-            socket_id
+            socket_id,
+            email: user.email
         });
     });
 });
